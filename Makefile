@@ -1,8 +1,6 @@
 include .env
 
-.PHONY: install
-install:
-	curl -sSf https://atlasgo.sh | sh
+MIGRATION_CONTAINER=go-migrate-sample-db-migration
 
 .PHONY: up
 up:
@@ -15,3 +13,20 @@ down:
 .PHONY: run
 run:
 	docker exec -it go-migrate-sample-api ash -c "air"
+
+.PHONY: migration-create
+migration-create:
+ifndef name
+	@echo "Usage: make create name=create_users_table"
+	@echo ""
+	@exit 1
+endif
+	docker compose run --no-deps --entrypoint migrate ${MIGRATION_CONTAINER} create -ext sql -seq -dir migrations $(name)
+
+.PHONY: migration-up
+migration-up:
+	docker compose run --rm ${MIGRATION_CONTAINER}
+
+.PHONY: migration-down
+migration-down:
+	docker compose run --rm ${MIGRATION_CONTAINER} down
