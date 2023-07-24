@@ -21,7 +21,7 @@ ifndef name
 	@echo ""
 	@exit 1
 endif
-	docker compose run --no-deps --entrypoint migrate ${MIGRATION_CONTAINER} create -ext sql -seq -dir migrations $(name)
+	docker compose run --rm --no-deps --entrypoint migrate ${MIGRATION_CONTAINER} create -ext sql -seq -dir migrations $(name)
 
 .PHONY: migration-up
 migration-up:
